@@ -4,11 +4,11 @@ BUILD_DIR = zig-out/bin
 SRC_DIR = src
 
 all : kernel8.img
-	@echo Building kernel image...
+	@echo Done
 
 kernel8.img: $(BUILD_DIR)/kernel8.elf
+	@echo Building kernel8.img...
 	@$(ARMGNU)-objcopy $(BUILD_DIR)/kernel8.elf -O binary kernel8.img
-	@echo Done
 
 $(BUILD_DIR)/kernel8.elf :
 	@echo Building kernel8.elf...
@@ -17,7 +17,7 @@ $(BUILD_DIR)/kernel8.elf :
 
 clean :
 	@echo Cleaning obj files...
-	@rm -rf $(BUILD_DIR)/*.img $(BUILD_DIR)/*.elf
+	@rm -rf *.img $(BUILD_DIR)/*.elf
 	@echo Done
 
 qemu : kernel8.img
