@@ -1,0 +1,35 @@
+const std = @import("std");
+
+pub fn build(b: *std.Build) void {
+    const target = b.resolveTargetQuery(.{
+        .cpu_arch = .aarch64,
+        .os_tag = .freestanding,
+        .abi = .none,
+    });
+    const optimize = b.standardOptimizeOption(.{});
+
+    const exe = b.addExecutable(.{
+        .name = "kernel8.elf",
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("src/main.zig"),
+            .target = target,
+            .optimize = optimize,
+        }),
+    });
+
+    exe.setLinkerScript(b.path("src/linker.ld"));
+    exe.root_module.strip = true;
+    exe.pie = false;
+
+    exe.root_module.addIncludePath(b.path("src"));
+
+    exe.root_module.addCSourceFiles(.{
+        .files = &[_][]const u8{
+            "src/boot.S",
+            "src/mm.S",
+        },
+        .flags = &[_][]const u8{ "-x", "assembler-with-cpp" },
+    });
+
+    b.installArtifact(exe);
+}
