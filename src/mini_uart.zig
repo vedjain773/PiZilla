@@ -51,6 +51,63 @@ pub fn send(c: c_char) void {
     utils.write32(gpios.AUX_MU_IO_REG, c);
 }
 
+pub fn sendInt(num: c_int) void {
+    var no_of_digits: usize = 0;
+    var no: c_int = num;
+
+    while (no != 0) {
+        no = @divFloor(no, 10);
+        no_of_digits += 1;
+    }
+
+    var digits: [20]c_int = undefined;
+
+    var i: usize = 0;
+    no = num;
+    while (i < no_of_digits) {
+        const last_digit: c_int = @rem(no, 10);
+        digits[i] = last_digit;
+        no = @divFloor(no, 10);
+        i += 1;
+    }
+
+    i = 0;
+    while (i < no_of_digits) {
+        const ch: c_char = @intCast('0' + digits[no_of_digits - 1 - i]);
+        send(ch);
+        i += 1;
+    }
+}
+
+pub fn sendHex(num: c_int) void {
+    const selector: c_int = 0b1111;
+    var no: c_int = num;
+
+    var digits: [8]c_int = undefined;
+
+    var i: usize = 0;
+    while (i < 8) {
+        const digit: c_int = no & selector;
+        no = no >> 4;
+        digits[7 - i] = digit;
+
+        i += 1;
+    }
+
+    i = 0;
+    while (i < 8) {
+        if (digits[i] < 10) {
+            sendInt(digits[i]);
+        } else {
+            const diff: c_int = digits[i] - 10;
+            const ch: c_char = @intCast('A' + diff);
+            send(ch);
+        }
+
+        i += 1;
+    }
+}
+
 pub fn sendString(str: [*c]const u8) void {
     var i: usize = 0;
 

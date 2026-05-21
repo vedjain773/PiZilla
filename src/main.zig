@@ -1,6 +1,7 @@
 const uart = @import("mini_uart.zig");
+const print = @import("print.zig");
 
 export fn kernel_main() void {
     uart.init();
-    uart.sendString("Hello World!\r\n");
+    print.print("Hello World! \r\n");
 }
