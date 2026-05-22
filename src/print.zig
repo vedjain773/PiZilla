@@ -1,27 +1,65 @@
 const uart = @import("mini_uart.zig");
 
-pub fn print(str: [*c]const u8, ) void {
-    var i: usize = 0;
-    while (str[i] != 0) {
-        const ch: c_char = @intCast(str[i]);
-        
-        if (ch == '{') {
-            i += 1;
+fn callUart(c: c_char, value: anytype) void {
+    const ty: type = @TypeOf(value);
+    const ty_info = @typeInfo(ty);
+    const is_int: bool = ty == comptime_int or ty_info == .int;
 
-            if (str[i + 1] == 'd') {
-
-            } else if (str[i + 1] == 'x') {
-
-            } else if (str[i + 1] == 's') {
-
-            } else if (str[i + 1] == 'c') {
-
+    switch (c) {
+        'd' => {
+            if (is_int) {
+                const val: c_int = @as(c_int, value);
+                uart.sendInt(val);   
             }
-
-        } else {
-            uart.send(ch);
+        },
+        'x' => {
+            if (is_int) {
+                uart.sendHex(value);
+            }
+        },
+        's' => { 
+            if (ty_info == .pointer) {
+                const str: []const u8 = value; 
+                uart.sendString(str);
+            }
+        },
+        'c' => {
+            if (is_int) {
+                const val: c_char = @truncate(value);
+                uart.send(val);
+            }
+        },
+        else => {
+            if (ty_info == .pointer) {
+                const str: []const u8 = value;
+                uart.sendString(str);
+            }
         }
-
-        i += 1;
     }
+}
+
+pub fn print(comptime str: []const u8, args: anytype) void {
+
+    comptime var next_arg: usize = 0;
+
+    inline for (str, 0..) |c, i| {
+        switch (c) {
+            '%' => {
+                const ch: c_char = @intCast(str[i+1]);
+                callUart(ch, args[next_arg]);
+
+                next_arg += 1;
+            },
+            else => {
+                if (i > 0) {
+                    if (str[i - 1] == '%') {
+                        continue;
+                    }
+                }
+
+                const ch: c_char = @intCast(c);
+                uart.send(ch);
+            }
+        }
+    } 
 }

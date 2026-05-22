@@ -108,10 +108,11 @@ pub fn sendHex(num: c_int) void {
     }
 }
 
-pub fn sendString(str: [*c]const u8) void {
+pub fn sendString(str: []const u8) void {
     var i: usize = 0;
 
-    while (str[i] != 0) : (i += 1) {
-        send(str[i]);
+    while (i < str.len) : (i += 1) {
+        const ch: c_char = @intCast(str[i]);
+        send(ch);
     }
 }
