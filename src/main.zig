@@ -5,6 +5,6 @@ const print = @import("print.zig");
 export fn kernel_main() void {
     uart.init();
 
-    const num: c_int = utils.getEl();
+    const num: i32 = utils.getEl();
     print.print("Hello World!\nCurrent exception layer: %d\r\n", .{num});
 }

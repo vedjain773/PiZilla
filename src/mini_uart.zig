@@ -2,13 +2,13 @@ const gpios = @import("gpio.zig");
 const utils = @import("utils.zig");
 
 pub fn init() void {
-    var selector: c_uint = 0;
+    var selector: i32 = 0;
 
     selector = utils.read32(gpios.GPFSEL1);
-    selector &= ~@as(c_uint, 7 << 12); // clear GPIO 14
+    selector &= ~@as(i32, 7 << 12); // clear GPIO 14
     selector |= (2 << 12); // set GPIO 14 to work in ALT FUNC 5
 
-    selector &= ~@as(c_uint, 7 << 15); // clear GPIO 15
+    selector &= ~@as(i32, 7 << 15); // clear GPIO 15
     selector |= (2 << 15); // set GPIO 15 to work in ALT FUNC 5
 
     utils.write32(gpios.GPFSEL1, selector);
@@ -40,7 +40,7 @@ pub fn recv() c_char {
     return utils.read32(gpios.AUX_MU_IO_REG & 0xFF);
 }
 
-pub fn send(c: c_char) void {
+pub fn send(c: u8) void {
     while (true) {
         // if the transmitter is empty, break from the loop
         if ((utils.read32(gpios.AUX_MU_LSR_REG) & 0x20) != 0) {
@@ -51,21 +51,21 @@ pub fn send(c: c_char) void {
     utils.write32(gpios.AUX_MU_IO_REG, c);
 }
 
-pub fn sendInt(num: c_int) void {
+pub fn sendInt(num: i32) void {
     var no_of_digits: usize = 0;
-    var no: c_int = num;
+    var no: i32 = num;
 
     while (no != 0) {
         no = @divFloor(no, 10);
         no_of_digits += 1;
     }
 
-    var digits: [20]c_int = undefined;
+    var digits: [20]i32 = undefined;
 
     var i: usize = 0;
     no = num;
     while (i < no_of_digits) {
-        const last_digit: c_int = @rem(no, 10);
+        const last_digit: i32 = @rem(no, 10);
         digits[i] = last_digit;
         no = @divFloor(no, 10);
         i += 1;
@@ -79,15 +79,15 @@ pub fn sendInt(num: c_int) void {
     }
 }
 
-pub fn sendHex(num: c_int) void {
-    const selector: c_int = 0b1111;
-    var no: c_int = num;
+pub fn sendHex(num: i32) void {
+    const selector: i32 = 0b1111;
+    var no: i32 = num;
 
-    var digits: [8]c_int = undefined;
+    var digits: [8]i32 = undefined;
 
     var i: usize = 0;
     while (i < 8) {
-        const digit: c_int = no & selector;
+        const digit: i32 = no & selector;
         no = no >> 4;
         digits[7 - i] = digit;
 
@@ -99,8 +99,8 @@ pub fn sendHex(num: c_int) void {
         if (digits[i] < 10) {
             sendInt(digits[i]);
         } else {
-            const diff: c_int = digits[i] - 10;
-            const ch: c_char = @intCast('A' + diff);
+            const diff: i32 = digits[i] - 10;
+            const ch: u8 = @intCast('A' + diff);
             send(ch);
         }
 
@@ -112,7 +112,7 @@ pub fn sendString(str: []const u8) void {
     var i: usize = 0;
 
     while (i < str.len) : (i += 1) {
-        const ch: c_char = @intCast(str[i]);
+        const ch: u8 = @intCast(str[i]);
         send(ch);
     }
 }

@@ -1,6 +1,6 @@
 const uart = @import("mini_uart.zig");
 
-fn callUart(c: c_char, value: anytype) void {
+fn callUart(c: u8, value: anytype) void {
     const ty: type = @TypeOf(value);
     const ty_info = @typeInfo(ty);
     const is_int: bool = ty == comptime_int or ty_info == .int;
@@ -8,7 +8,7 @@ fn callUart(c: c_char, value: anytype) void {
     switch (c) {
         'd' => {
             if (is_int) {
-                const val: c_int = @as(c_int, value);
+                const val: i32 = @truncate(value);
                 uart.sendInt(val);   
             }
         },
@@ -24,8 +24,8 @@ fn callUart(c: c_char, value: anytype) void {
             }
         },
         'c' => {
-            if (is_int and ty != c_int) {
-                const val: c_char = @truncate(value);
+            if (is_int) {
+                const val: u8 = @intCast(value);
                 uart.send(val);
             }
         },
@@ -45,7 +45,7 @@ pub fn print(comptime str: []const u8, args: anytype) void {
     inline for (str, 0..) |c, i| {
         switch (c) {
             '%' => {
-                const ch: c_char = @intCast(str[i+1]);
+                const ch: u8 = @intCast(str[i+1]);
                 callUart(ch, args[next_arg]);
 
                 next_arg += 1;
@@ -57,7 +57,7 @@ pub fn print(comptime str: []const u8, args: anytype) void {
                     }
                 }
 
-                const ch: c_char = @intCast(c);
+                const ch: u8 = @intCast(c);
                 uart.send(ch);
             }
         }
