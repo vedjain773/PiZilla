@@ -14,3 +14,16 @@ pub fn write32(addr: c_ulong, value: c_uint) void {
     const ptr = @as(*volatile u32, @ptrFromInt(addr));
     ptr.* = value;
 }
+
+pub fn getEl() c_int {
+    var el: c_int = 0;
+
+    asm volatile (//syscall
+        "mrs %[result], CurrentEL"
+        : [result] "=r" (el)
+        :
+    );
+
+    el = el >> 2;
+    return el;
+}

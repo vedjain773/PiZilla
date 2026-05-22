@@ -24,7 +24,7 @@ fn callUart(c: c_char, value: anytype) void {
             }
         },
         'c' => {
-            if (is_int) {
+            if (is_int and ty != c_int) {
                 const val: c_char = @truncate(value);
                 uart.send(val);
             }
