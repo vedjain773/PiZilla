@@ -2,16 +2,8 @@ const gpios = @import("gpio.zig");
 const utils = @import("utils.zig");
 
 pub fn init() void {
-    var selector: i32 = 0;
-
-    selector = utils.read32(gpios.GPFSEL1);
-    selector &= ~@as(i32, 7 << 12); // clear GPIO 14
-    selector |= (2 << 12); // set GPIO 14 to work in ALT FUNC 5
-
-    selector &= ~@as(i32, 7 << 15); // clear GPIO 15
-    selector |= (2 << 15); // set GPIO 15 to work in ALT FUNC 5
-
-    utils.write32(gpios.GPFSEL1, selector);
+    gpios.setGpioFunc(14, gpios.Funcs.ALT5);
+    gpios.setGpioFunc(15, gpios.Funcs.ALT5);
 
     utils.write32(gpios.GPPUD, 0);
     utils.delay(150);
@@ -51,21 +43,21 @@ pub fn send(c: u8) void {
     utils.write32(gpios.AUX_MU_IO_REG, c);
 }
 
-pub fn sendInt(num: i32) void {
+pub fn sendInt(num: u32) void {
     var no_of_digits: usize = 0;
-    var no: i32 = num;
+    var no: u32 = num;
 
     while (no != 0) {
         no = @divFloor(no, 10);
         no_of_digits += 1;
     }
 
-    var digits: [20]i32 = undefined;
+    var digits: [20]u32 = undefined;
 
     var i: usize = 0;
     no = num;
     while (i < no_of_digits) {
-        const last_digit: i32 = @rem(no, 10);
+        const last_digit: u32 = @rem(no, 10);
         digits[i] = last_digit;
         no = @divFloor(no, 10);
         i += 1;
@@ -79,15 +71,15 @@ pub fn sendInt(num: i32) void {
     }
 }
 
-pub fn sendHex(num: i32) void {
-    const selector: i32 = 0b1111;
-    var no: i32 = num;
+pub fn sendHex(num: u32) void {
+    const selector: u32 = 0b1111;
+    var no: u32 = num;
 
-    var digits: [8]i32 = undefined;
+    var digits: [8]u32 = undefined;
 
     var i: usize = 0;
     while (i < 8) {
-        const digit: i32 = no & selector;
+        const digit: u32 = no & selector;
         no = no >> 4;
         digits[7 - i] = digit;
 
@@ -99,7 +91,7 @@ pub fn sendHex(num: i32) void {
         if (digits[i] < 10) {
             sendInt(digits[i]);
         } else {
-            const diff: i32 = digits[i] - 10;
+            const diff: u32 = digits[i] - 10;
             const ch: u8 = @intCast('A' + diff);
             send(ch);
         }

@@ -8,7 +8,7 @@ fn callUart(c: u8, value: anytype) void {
     switch (c) {
         'd' => {
             if (is_int) {
-                const val: i32 = @truncate(value);
+                const val: u32 = @truncate(value);
                 uart.sendInt(val);   
             }
         },
