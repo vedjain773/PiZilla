@@ -25,8 +25,8 @@ pub fn build(b: *std.Build) void {
 
     exe.root_module.addCSourceFiles(.{
         .files = &[_][]const u8{
-            "src/asm/boot.S",
-            "src/asm/mm.S",
+            "./asm/boot.S",
+            "./asm/mm.S",
         },
         .flags = &[_][]const u8{ "-x", "assembler-with-cpp" },
     });
