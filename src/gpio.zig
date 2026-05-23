@@ -1,6 +1,6 @@
 const utils = @import("utils.zig");
 
-const BASE: usize = 0x3F000000;
+pub const BASE: usize = 0x3F000000;
 
 pub const GPFSEL1: usize = (BASE + 0x00200004);
 pub const GPSET0: usize = (BASE + 0x0020001C);

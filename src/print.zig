@@ -14,7 +14,8 @@ fn callUart(c: u8, value: anytype) void {
         },
         'x' => {
             if (is_int) {
-                uart.sendHex(value);
+                const val: u32 = @truncate(value);
+                uart.sendHex(val);
             }
         },
         's' => { 

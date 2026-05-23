@@ -27,6 +27,8 @@ pub fn build(b: *std.Build) void {
         .files = &[_][]const u8{
             "./asm/boot.S",
             "./asm/mm.S",
+            "./asm/entry.S",
+            "./asm/irq.S",
         },
         .flags = &[_][]const u8{ "-x", "assembler-with-cpp" },
     });
