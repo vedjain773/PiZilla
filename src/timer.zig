@@ -21,15 +21,24 @@ const interval: u32 = 200000;
 var curr_val: u32 = 0;
 
 pub fn timerInit() void {
+    //Read current free-timer value
     curr_val = utils.read32(TIMER_CLO);
+
+    //Add interval to the curerent value to make sure that the next Interrupt
+    //fires at after that interval
     curr_val += interval;
+
+    //write this value to the first compare register
     utils.write32(TIMER_C1, curr_val);
 }
 
 pub fn handleTimerIrq() void {
+    //Increase the current value by the interval to make sure another Interrupt
+    //fires after said interval and write this value to the first compare reg
     curr_val += interval;
     utils.write32(TIMER_C1, curr_val);
 
+    //Acknowledge the interrupt
     utils.write32(TIMER_CS, TIMER_CS_M1);
     print.print("Timer interrupt received!\n", .{});
 }
