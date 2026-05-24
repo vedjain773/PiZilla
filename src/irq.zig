@@ -47,7 +47,7 @@ pub extern fn irq_vector_init() void;
 pub extern fn enable_irq() void;
 pub extern fn disable_irq() void;
 
-export fn show_invalid_entry_message(ty: u32, esr: usize, addr: usize) void {
+pub export fn show_invalid_entry_message(ty: u32, esr: usize, addr: usize) void {
     print.print("[Invalid entry message] %s, ESR: %x, address: %x\r\n", .{error_msgs[ty], esr, addr});
 }
 
@@ -55,7 +55,7 @@ pub fn enableInterruptController() void {
     utils.write32(ENABLE_IRQS_1, SYSTEM_TIMER_IRQ_1);
 }
 
-export fn handle_irq() void {
+pub export fn handle_irq() void {
     const irq: u32 = utils.read32(IRQ_PENDING_1);
 
     switch (irq) {

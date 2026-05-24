@@ -40,5 +40,5 @@ pub fn handleTimerIrq() void {
 
     //Acknowledge the interrupt
     utils.write32(TIMER_CS, TIMER_CS_M1);
-    print.print("Timer interrupt received!\n", .{});
+    //print.print("Timer interrupt received!\n", .{});
 }
