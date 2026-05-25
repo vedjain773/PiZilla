@@ -14,6 +14,7 @@ var height: u32 = 0;
 var width: u32 = 0;
 var pitch: u32 = 0;
 var isrgb: u32 = 0;
+var fb: [*]u32 = undefined; 
 
 pub fn init_fb() void {
     var mb_buf: [30]u32 align(16) = undefined;
@@ -63,18 +64,41 @@ pub fn init_fb() void {
         height = mb_ptr[6];
         pitch = mb_ptr[28];
         isrgb = mb_ptr[19];
-    }
+        fb = @ptrFromInt(mb_buf[23]);
 
-    print.print("Width: %d\n", .{width});
-    print.print("Height: %d\n", .{height});
-    print.print("Pitch: %d\n", .{pitch});
-    print.print("isRGB: %d\n", .{isrgb});
+        print.print("Width: %d\n", .{width});
+        print.print("Height: %d\n", .{height});
+        print.print("Pitch: %d\n", .{pitch});
+        print.print("isRGB: %d\n", .{isrgb});
+    }
 }
 
 pub fn drawPixel(x: u32, y: u32) void {
     if (x > width or y > height)
         return;
 
-    //const offset: u32 = (y * pitch) + (x * 4);
-    //*((unsigned int*)(fb + offset)) = 0xffffffff;
+    const offset: u32 = (y * 640) + x;
+    fb[offset] = 0xffffffff;
+}
+
+pub fn drawLineH(x1: u32, x2: u32, y: u32) void {
+    for (x1..x2) |i| {
+        const i_32: u32 = @intCast(i);
+        drawPixel(i_32, y);
+    }
+}
+
+pub fn drawLineV(y1: u32, y2: u32, x: u32) void {
+    for (y1..y2) |j| {
+        const j_u32: u32 = @intCast(j);
+        drawPixel(x, j_u32);
+    }
+}
+
+pub fn drawRectangle(x1: u32, y1: u32, x2: u32, y2: u32) void {
+    drawLineH(x1, x2, y1);
+    drawLineH(x1, x2, y2);
+
+    drawLineV(y1, y2, x1);
+    drawLineV(y1, y2, x2);
 }

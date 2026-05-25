@@ -12,6 +12,8 @@ export fn kernel_main() void {
     print.print("Hello World!\nCurrent exception layer: %d\r\n", .{num});
 
     framebuffer.init_fb();
+    framebuffer.drawRectangle(0, 0, 639, 479);
+    //framebuffer.drawLineH(0, 639, 0);
 
     irq.irq_vector_init();
     timer.timerInit();
