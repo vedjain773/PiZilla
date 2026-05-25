@@ -37,5 +37,5 @@ pub fn clamp(x: i32, x_min: u32, x_max: u32) u32 {
         return x_max;
     }
 
-    return x_min;
+    return x_u;
 }
