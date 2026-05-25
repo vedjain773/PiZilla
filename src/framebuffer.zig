@@ -14,11 +14,11 @@ var height: u32 = 0;
 var width: u32 = 0;
 var pitch: u32 = 0;
 var isrgb: u32 = 0;
-var fb: [*]u32 = undefined; 
+var fb: [*]volatile u32 = undefined; 
 
 pub fn init_fb() void {
     var mb_buf: [30]u32 align(16) = undefined;
-    const mb_ptr: *[30]u32 = &mb_buf;
+    const mb_ptr: *volatile [30]u32 = &mb_buf;
 
     mb_ptr[0] = 30 * 4;
     mb_ptr[1] = mailbox.REQUEST_CODE;
@@ -64,17 +64,27 @@ pub fn init_fb() void {
         height = mb_ptr[6];
         pitch = mb_ptr[28];
         isrgb = mb_ptr[19];
-        fb = @ptrFromInt(mb_buf[23]);
-
-        print.print("Width: %d\n", .{width});
-        print.print("Height: %d\n", .{height});
-        print.print("Pitch: %d\n", .{pitch});
-        print.print("isRGB: %d\n", .{isrgb});
+        fb = @ptrFromInt(mb_ptr[23]);
     }
 }
 
 pub fn clrScreen() void {
     @memset(fb[0..307200], 0x00000000);
+}
+
+pub fn drawBlankPix(x: u32, y: u32) void {
+    if (x > width or y > height)
+        return;
+
+    const offset: u32 = (y * 640) + x;
+    fb[offset] = 0x00000000;
+}
+
+pub fn drawBlankLineH(x1: u32, x2: u32, y: u32) void {
+    for (x1..x2) |i| {
+        const i_32: u32 = @intCast(i);
+        drawBlankPix(i_32, y);
+    }
 }
 
 pub fn drawPixel(x: u32, y: u32) void {
@@ -97,6 +107,22 @@ pub fn drawLineV(y1: u32, y2: u32, x: u32) void {
         const j_u32: u32 = @intCast(j);
         drawPixel(x, j_u32);
     }
+}
+
+pub fn updateLineH(x1: u32, x2: u32, nx1: u32, nx2: u32, y: u32) void {
+    if (nx2 > x2 and nx1 > x1) {
+        drawLineH(x2, nx2, y);
+        drawBlankLineH(x1, nx1, y);
+        return;
+    }
+
+    if (nx1 < x1 and nx2 < x2) {
+        drawLineH(nx1, x1, y);
+        drawBlankLineH(nx2, x2, y);
+        return;
+    }
+
+    return;
 }
 
 pub fn drawRectangle(x1: u32, y1: u32, x2: u32, y2: u32) void {

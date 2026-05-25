@@ -27,7 +27,7 @@ pub const MAILBOX_CH_TOUCH: u32 = 6;
 pub const MAILBOX_CH_COUNT: u32 = 7;
 pub const MAILBOX_CH_PROP: u32 = 8;
 
-pub fn mailboxCall(mb_buf: [*]u32, ch: u32) bool {
+pub fn mailboxCall(mb_buf: [*] volatile u32, ch: u32) bool {
     const to_and: u32 = @intCast(0xF);
     const mb_buff_i: u32 = @intCast(@intFromPtr(&mb_buf[0]));
 
