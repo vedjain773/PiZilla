@@ -73,6 +73,10 @@ pub fn init_fb() void {
     }
 }
 
+pub fn clrScreen() void {
+    @memset(fb[0..307200], 0x00000000);
+}
+
 pub fn drawPixel(x: u32, y: u32) void {
     if (x > width or y > height)
         return;

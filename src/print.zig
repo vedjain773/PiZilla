@@ -26,7 +26,7 @@ fn callUart(c: u8, value: anytype) void {
         },
         'c' => {
             if (is_int) {
-                const val: u8 = @intCast(value);
+                const val: u8 = @truncate(value);
                 uart.send(val);
             }
         },

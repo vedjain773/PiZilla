@@ -46,6 +46,11 @@ pub fn send(c: u8) void {
 pub fn sendInt(num: u32) void {
     var no_of_digits: usize = 0;
     var no: u32 = num;
+    
+    if (no == 0) {
+        send('0');
+        return;
+    }
 
     while (no != 0) {
         no = @divFloor(no, 10);
@@ -75,7 +80,7 @@ pub fn sendHex(num: u32) void {
     const selector: u32 = 0b1111;
     var no: u32 = num;
 
-    var digits: [8]u32 = undefined;
+    var digits = [8]u32{0, 0, 0, 0, 0, 0, 0, 0};
 
     var i: usize = 0;
     while (i < 8) {

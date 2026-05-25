@@ -42,3 +42,8 @@ pub fn handleTimerIrq() void {
     utils.write32(TIMER_CS, TIMER_CS_M1);
     //print.print("Timer interrupt received!\n", .{});
 }
+
+pub fn getTicks() u32 {
+    const low: u32 = utils.read32(TIMER_CLO);
+    return @as(u32, @divFloor(low, 1000));
+}
