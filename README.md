@@ -1,4 +1,4 @@
-# [PiZilla]
+# PiZilla
 
 A bare metal OS kernel for the Raspberry Pi 3B, written in Zig.
 
@@ -23,8 +23,6 @@ A bare metal OS kernel for the Raspberry Pi 3B, written in Zig.
 Clone the repository
 ```
 git clone https://github.com/vedjain773/PiZilla.git
-```
-```
 ```
 
 Build the project
@@ -66,8 +64,6 @@ make qemu-d
     └── utils.zig
 ```
 
-```
-```
 ## Controls
 
 | Key | Action |
