@@ -20,6 +20,22 @@ const Ball = struct {
     posy: i32,
     velx: i32,
     vely: i32,
+
+    pub fn updatePos(self: *Ball) void {
+        self.posx += self.velx;
+        self.posy += self.vely;
+
+        fb.drawPixel(@max(self.posx, 0), @max(self.posy, 0));
+        fb.drawBlankPix(@max(self.old_posx, 0), @max(self.old_posy, 0));
+    }
+
+    pub fn resetPos(self: *Ball) void {
+        self.posx = 50;
+        self.posy = 50;
+        self.old_posx = 50;
+        self.old_posy = 50;
+    }
+
 };
 
 const Paddle = struct {
@@ -27,7 +43,20 @@ const Paddle = struct {
     px2: u32,
     x1: u32,
     x2: u32,
-    y: u32, 
+    y: u32,
+
+    pub fn moveRight(self: *Paddle) void {
+        self.x1 += 2;
+        self.x2 += 2;
+        fb.updateLineH(self.px1, self.px2, self.x1, self.x2, self.y);
+    }
+
+    pub fn moveLeft(self: *Paddle) void {
+        self.x1 -= 2;
+        self.x2 -= 2;
+        fb.updateLineH(self.px1, self.px2, self.x1, self.x2, self.y);
+    }
+
 };
 
 fn wait(t: u32) void {
@@ -38,10 +67,10 @@ fn wait(t: u32) void {
     return;
 }
 
-pub fn detect_col(bx: i32, by: i32, pdy: u32, pdx1: u32, pdx2: u32) bool {
-    if (@max(by, 0) == pdy) {
-        const bx_u: u32 = @max(bx, 0);
-        if (bx_u > pdx1 and bx_u < pdx2) {
+pub fn detect_col(ball: *Ball, paddle: *Paddle) bool {
+    if (@max(ball.posy, 0) == paddle.y) {
+        const bx_u: u32 = @max(ball.posx, 0);
+        if (bx_u > paddle.x1 and bx_u < paddle.x2) {
             return true;
         }
         return false;
@@ -92,6 +121,7 @@ pub fn start() noreturn {
     font.renderStr(0, 0, "SCORE");
     font.renderInt(50, 0, su);
     font.renderInt(70, 0, sd);
+
     while (true) {
         find_target(ball.velx, ball.vely);
         pad_1.px1 = pad_1.x1;
@@ -102,33 +132,21 @@ pub fn start() noreturn {
 
         ball.old_posx = ball.posx;
         ball.old_posy = ball.posy;
-        
-        ball.posx += ball.velx;
-        ball.posy += ball.vely;
-        
-        fb.drawPixel(@max(ball.posx, 0), @max(ball.posy, 0));
-        fb.drawBlankPix(@max(ball.old_posx, 0), @max(ball.old_posy, 0));
-        
+
+        ball.updatePos();
+
         const c: u8 = uart.crec();
         if (c == 'd') {
-            pad_2.x1 += 2;
-            pad_2.x2 += 2;
-            fb.updateLineH(pad_2.px1, pad_2.px2, pad_2.x1, pad_2.x2, pad_2.y);
+            pad_2.moveRight();
         } else if (c == 'a') {
-            pad_2.x1 -= 2;
-            pad_2.x2 -= 2;
-            fb.updateLineH(pad_2.px1, pad_2.px2, pad_2.x1, pad_2.x2, pad_2.y);
+            pad_2.moveLeft();
         }
 
         if (ball.vely < 0) {
             if (targ_up > pad_1.x2 - 5) {
-                pad_1.x1 += 2;
-                pad_1.x2 += 2;
-                fb.updateLineH(pad_1.px1, pad_1.px2, pad_1.x1, pad_1.x2, pad_1.y);
+                pad_1.moveRight();
             } else if (targ_up < pad_1.x1 + 5) {
-                pad_1.x1 -= 2;
-                pad_1.x2 -= 2;
-                fb.updateLineH(pad_1.px1, pad_1.px2, pad_1.x1, pad_1.x2, pad_1.y);               
+                pad_1.moveLeft();
             }
         }
         
@@ -140,16 +158,19 @@ pub fn start() noreturn {
             sy = @as(u32, @intCast(ball.posy));
         }
         
-        if (detect_col(ball.posx, ball.posy, pad_1.y, pad_1.x1, pad_1.x2) or detect_col(ball.posx, ball.posy, pad_2.y, pad_2.x1, pad_2.x2))  {
+        if (detect_col(&ball, &pad_1) or detect_col(&ball, &pad_2)) {
             ball.vely *= -1;
             sx = @as(u32, @intCast(ball.posx));
             sy = @as(u32, @intCast(ball.posy));
         }
 
-        if (ball.posy < 10) {
-            sd += 1;
-            ball.posx = 50;
-            ball.posy = 50;
+        if (ball.posy < 10 or ball.posy > 470) {
+            if (ball.posy < 10) {sd += 1;}
+            else if (ball.posy > 470) {su += 1;}
+
+            fb.drawBlankPix(@max(ball.posx, 0), @max(ball.posy, 0));
+
+            ball.resetPos(); 
             print.print("Score: %d - %d\n", .{su, sd});
 
             font.clearGlyph(50, 0);
@@ -157,17 +178,5 @@ pub fn start() noreturn {
             font.renderInt(50, 0, su);
             font.renderInt(70, 0, sd);
         } 
-
-        if (ball.posy > 470) {
-            su += 1;
-            ball.posx = 50;
-            ball.posy = 50;
-            print.print("Score: %d - %d\n", .{su, sd});
-
-            font.clearGlyph(50, 0);
-            font.clearGlyph(70, 0);
-            font.renderInt(50, 0, su);
-            font.renderInt(70, 0, sd);
-        }
     }
 }
