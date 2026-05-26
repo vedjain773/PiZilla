@@ -29,13 +29,7 @@ pub fn getEl() u32 {
 }
 
 pub fn clamp(x: i32, x_min: u32, x_max: u32) u32 {
-    const x_u: u32 = @intCast(x);
-
-    if (x_u <= x_min) {
-        return x_min;
-    } else if (x_u >= x_max) {
-        return x_max;
-    }
-
-    return x_u;
+    if (x <= @as(i32, @intCast(x_min))) return x_min;
+    if (x >= @as(i32, @intCast(x_max))) return x_max;
+    return @intCast(x);
 }

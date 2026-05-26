@@ -55,7 +55,7 @@ pub fn find_target(vx: i32, vy: i32) void {
         targ_down = utils.clamp(c - 470, 0, 639);
     }
 
-    print.print("%d, %d\r\n", .{targ_up, targ_down});
+    print.print("%d, %d\r\n", .{sx, sy});
 }
 
 pub fn start() noreturn {
