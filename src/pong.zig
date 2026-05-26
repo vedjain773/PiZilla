@@ -1,5 +1,6 @@
 const fb = @import("framebuffer.zig");
 const utils = @import("utils.zig");
+const uart = @import("mini_uart.zig");
 const print = @import("print.zig");
 const timer = @import("timer.zig");
 
@@ -54,8 +55,6 @@ pub fn find_target(vx: i32, vy: i32) void {
         targ_up = utils.clamp(c - 10, 0, 639);
         targ_down = utils.clamp(c - 470, 0, 639);
     }
-
-    print.print("%d, %d\r\n", .{sx, sy});
 }
 
 pub fn start() noreturn {
@@ -103,17 +102,18 @@ pub fn start() noreturn {
         fb.drawPixel(@max(ball.posx, 0), @max(ball.posy, 0));
         fb.drawBlankPix(@max(ball.old_posx, 0), @max(ball.old_posy, 0));
         
-        if (ball.vely > 0) {
-            if (targ_down > pad_2.x2 - 5) {
-                pad_2.x1 += 2;
-                pad_2.x2 += 2;
-                fb.updateLineH(pad_2.px1, pad_2.px2, pad_2.x1, pad_2.x2, pad_2.y);
-            } else if (targ_down < pad_2.x1 + 5) {
-                pad_2.x1 -= 2;
-                pad_2.x2 -= 2;
-                fb.updateLineH(pad_2.px1, pad_2.px2, pad_2.x1, pad_2.x2, pad_2.y);
-            }
-        } else {
+        const c: u8 = uart.crec();
+        if (c == 'd') {
+            pad_2.x1 += 2;
+            pad_2.x2 += 2;
+            fb.updateLineH(pad_2.px1, pad_2.px2, pad_2.x1, pad_2.x2, pad_2.y);
+        } else if (c == 'a') {
+            pad_2.x1 -= 2;
+            pad_2.x2 -= 2;
+            fb.updateLineH(pad_2.px1, pad_2.px2, pad_2.x1, pad_2.x2, pad_2.y);
+        }
+
+        if (ball.vely < 0) {
             if (targ_up > pad_1.x2 - 5) {
                 pad_1.x1 += 2;
                 pad_1.x2 += 2;
@@ -126,7 +126,6 @@ pub fn start() noreturn {
         }
         
         wait(100);
-        //fb.clrScreen();
         
         if (ball.posx <= 0 or ball.posx >= 639) {
             ball.velx *= -1;

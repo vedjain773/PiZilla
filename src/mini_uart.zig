@@ -21,7 +21,7 @@ pub fn init() void {
     utils.write32(gpios.AUX_MU_CNTL_REG, 3);
 }
 
-pub fn recv() c_char {
+pub fn recv() u8 {
     while (true) {
         // if the data is ready to be read, break out of the loop
         if ((utils.read32(gpios.AUX_MU_LSR_REG) & 0x01) != 0) {
@@ -29,7 +29,15 @@ pub fn recv() c_char {
         }
     }
 
-    return utils.read32(gpios.AUX_MU_IO_REG & 0xFF);
+    return @truncate(utils.read32(gpios.AUX_MU_IO_REG) & 0xFF);
+}
+
+pub fn crec() u8 {
+    if ((utils.read32(gpios.AUX_MU_LSR_REG) & 0x01) == 0) {
+        return @as(u8, 0);
+    } else {
+        return @truncate(utils.read32(gpios.AUX_MU_IO_REG) & 0xFF);
+    }
 }
 
 pub fn send(c: u8) void {
