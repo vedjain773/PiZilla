@@ -3,11 +3,15 @@ const utils = @import("utils.zig");
 const uart = @import("mini_uart.zig");
 const print = @import("print.zig");
 const timer = @import("timer.zig");
+const font = @import("font.zig");
 
 var sx: u32 = 50;
 var sy: u32 = 50;
 var targ_up: u32 = 0;
 var targ_down: u32 = 0;
+
+var su: u32 = 0;
+var sd: u32 = 0;
 
 const Ball = struct {
     old_posx: i32,
@@ -85,6 +89,9 @@ pub fn start() noreturn {
         .y = 470,
     };
     
+    font.renderStr(0, 0, "SCORE");
+    font.renderInt(50, 0, su);
+    font.renderInt(70, 0, sd);
     while (true) {
         find_target(ball.velx, ball.vely);
         pad_1.px1 = pad_1.x1;
@@ -125,7 +132,7 @@ pub fn start() noreturn {
             }
         }
         
-        wait(100);
+        wait(75);
         
         if (ball.posx <= 0 or ball.posx >= 639) {
             ball.velx *= -1;
@@ -137,6 +144,30 @@ pub fn start() noreturn {
             ball.vely *= -1;
             sx = @as(u32, @intCast(ball.posx));
             sy = @as(u32, @intCast(ball.posy));
+        }
+
+        if (ball.posy < 10) {
+            sd += 1;
+            ball.posx = 50;
+            ball.posy = 50;
+            print.print("Score: %d - %d\n", .{su, sd});
+
+            font.clearGlyph(50, 0);
+            font.clearGlyph(70, 0);
+            font.renderInt(50, 0, su);
+            font.renderInt(70, 0, sd);
+        } 
+
+        if (ball.posy > 470) {
+            su += 1;
+            ball.posx = 50;
+            ball.posy = 50;
+            print.print("Score: %d - %d\n", .{su, sd});
+
+            font.clearGlyph(50, 0);
+            font.clearGlyph(70, 0);
+            font.renderInt(50, 0, su);
+            font.renderInt(70, 0, sd);
         }
     }
 }

@@ -16,6 +16,6 @@ export fn kernel_main() noreturn {
 
     irq.enableInterruptController();
     irq.enable_irq(); 
-
+    
     pong.start();
 }
