@@ -18,7 +18,7 @@ pub fn build(b: *std.Build) void {
     });
 
     exe.setLinkerScript(b.path("src/linker.ld"));
-    exe.root_module.strip = true;
+    exe.root_module.strip = false;
     exe.pie = false;
 
     exe.root_module.addIncludePath(b.path("src"));

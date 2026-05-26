@@ -79,10 +79,10 @@ pub fn sendInt(num: u32) void {
 pub fn sendHex(num: u32) void {
     const selector: u32 = 0b1111;
     var no: u32 = num;
-
-    var digits = [8]u32{0, 0, 0, 0, 0, 0, 0, 0};
-
     var i: usize = 0;
+
+    var digits: [8]u32 = .{0, 0, 0, 0, 0, 0, 0, 0};
+
     while (i < 8) {
         const digit: u32 = no & selector;
         no = no >> 4;
@@ -90,7 +90,7 @@ pub fn sendHex(num: u32) void {
 
         i += 1;
     }
-
+    
     i = 0;
     while (i < 8) {
         if (digits[i] < 10) {

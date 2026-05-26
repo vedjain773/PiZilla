@@ -5,7 +5,7 @@ const timer = @import("timer.zig");
 const irq = @import("irq.zig");
 const pong = @import("pong.zig");
 
-export fn kernel_main() noreturn {
+export fn kernel_main() void {
     uart.init();
 
     const num: u32 = utils.getEl();
@@ -17,5 +17,5 @@ export fn kernel_main() noreturn {
     irq.enableInterruptController();
     irq.enable_irq();
 
-    pong.start();
+    //pong.start();
 }

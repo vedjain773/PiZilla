@@ -27,10 +27,10 @@ master:
 	ldr	x0, =SPSR_VALUE
 	msr	spsr_el2, x0
 
-	adr	x0, el1_entry		
+	adr	x0, el1_entry
 	msr	elr_el2, x0
 
-	eret				
+	eret
 
 el1_entry:
 	adr	x0, bss_begin
