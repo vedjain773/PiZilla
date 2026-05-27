@@ -1,4 +1,17 @@
 const uart = @import("mini_uart.zig");
+const fuart = @import("uart.zig");
+
+var is_mini: bool = false;
+
+pub fn setUart(choice: u32) void {
+    if (choice == 0) {
+        is_mini = true;
+        uart.init();
+    } else {
+        is_mini = false;
+        fuart.init();
+    }
+}
 
 fn callUart(c: u8, value: anytype) void {
     const ty: type = @TypeOf(value);
@@ -9,31 +22,55 @@ fn callUart(c: u8, value: anytype) void {
         'd' => {
             if (is_int) {
                 const val: u32 = @truncate(value);
-                uart.sendInt(val);   
+                if (is_mini) {
+                    uart.sendInt(val);   
+                } else {
+                    fuart.sendInt(val);
+                }
             }
         },
         'x' => {
             if (is_int) {
                 const val: u32 = @truncate(value);
-                uart.sendHex(val);
+                
+                if (is_mini) {
+                    uart.sendHex(val);
+                } else {
+                    fuart.sendHex(val);
+                }
             }
         },
         's' => { 
             if (ty_info == .pointer) {
                 const str: []const u8 = value; 
-                uart.sendString(str);
+                
+                if (is_mini) {
+                    uart.sendString(str);
+                } else {
+                    fuart.sendStr(str);
+                }
             }
         },
         'c' => {
             if (is_int) {
                 const val: u8 = @truncate(value);
-                uart.send(val);
+                
+                if (is_mini) {
+                    uart.send(val);
+                } else {
+                    fuart.send(val);
+                }
             }
         },
         else => {
             if (ty_info == .pointer) {
                 const str: []const u8 = value;
-                uart.sendString(str);
+                
+                if (is_mini) {
+                    uart.sendString(str);
+                } else {
+                    fuart.sendStr(str);
+                }
             }
         }
     }
@@ -59,7 +96,12 @@ pub fn print(comptime str: []const u8, args: anytype) void {
                 }
 
                 const ch: u8 = @intCast(c);
-                uart.send(ch);
+                
+                if (is_mini) {
+                    uart.send(ch);
+                } else {
+                    fuart.send(ch);
+                }
             }
         }
     } 

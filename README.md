@@ -7,11 +7,9 @@ A bare metal OS kernel for the Raspberry Pi 3B, written in Zig.
 ## Features
 
 - Bare metal aarch64 boot via custom assembly bootloader
-- Mini UART driver for serial I/O
+- Mini UART and PL011 UART drivers for serial I/O
 - Mailbox interface for VideoCore GPU communication
-- Framebuffer driver with pixel and line drawing
-- Bitmap font rendering
-- Timer driver
+- Drivers for framebuffer and system timer
 - Pong game (player vs AI) with keyboard input
 
 ## Requirements
