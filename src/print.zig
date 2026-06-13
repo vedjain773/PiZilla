@@ -47,7 +47,7 @@ fn callUart(c: u8, value: anytype) void {
     const ty: type = @TypeOf(value);
     const ty_info = @typeInfo(ty);
     const is_int: bool = ty == comptime_int or ty_info == .int;
-
+    
     switch (c) {
         'd' => {
             if (is_int) {

@@ -7,11 +7,11 @@ const panic_handler = @import("panic.zig");
 
 pub const panic = panic_handler.PanicHandler;
 
-export fn kernel_main() noreturn {
+export fn kernel_main() void {
     const num: u32 = utils.getEl();
 
     print.setUart(print.UartType.full_uart);
-    print.print("Exception-level: %x\n", .{num});
+    print.print("Exception-level: %d\n", .{num});
 
     irq.irq_vector_init();
     timer.timerInit();
@@ -20,5 +20,5 @@ export fn kernel_main() noreturn {
     irq.enable_irq(); 
    
     print.print("Hello World!, %s\n", .{"Ved"});
-    pong.start();    
+    //pong.start();
 }
