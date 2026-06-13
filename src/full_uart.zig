@@ -129,5 +129,3 @@ pub fn sendStr(str: []const u8) void {
         send(str[i]);
     }
 }
-
-

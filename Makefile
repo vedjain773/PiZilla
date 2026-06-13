@@ -20,7 +20,7 @@ clean :
 	@rm -rf *.img $(BUILD_DIR)/*.elf
 	@echo Done
 
-qemu-pl: kernel8.img
+qemu: kernel8.img
 	@echo Emulating on QEMU...
 	@qemu-system-aarch64 \
 		-M raspi3b \

@@ -1,18 +1,16 @@
-const uart = @import("mini_uart.zig");
-const fuart = @import("uart.zig");
 const utils = @import("utils.zig");
 const print = @import("print.zig");
 const timer = @import("timer.zig");
 const irq = @import("irq.zig");
 const pong = @import("pong.zig");
+const panic_handler = @import("panic.zig");
+
+pub const panic = panic_handler.PanicHandler;
 
 export fn kernel_main() noreturn {
     const num: u32 = utils.getEl();
 
-    print.setUart(1);
-    print.print("Exception-level: %x\n", .{num});
-
-    print.setUart(0);
+    print.setUart(print.UartType.full_uart);
     print.print("Exception-level: %x\n", .{num});
 
     irq.irq_vector_init();
@@ -20,6 +18,7 @@ export fn kernel_main() noreturn {
 
     irq.enableInterruptController();
     irq.enable_irq(); 
-    
-    pong.start();
+   
+    print.print("Hello World!, %s\n", .{"Ved"});
+    pong.start();    
 }

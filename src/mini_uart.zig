@@ -113,7 +113,7 @@ pub fn sendHex(num: u32) void {
     }
 }
 
-pub fn sendString(str: []const u8) void {
+pub fn sendStr(str: []const u8) void {
     var i: usize = 0;
 
     while (i < str.len) : (i += 1) {
