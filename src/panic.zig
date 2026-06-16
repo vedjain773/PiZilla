@@ -1,4 +1,4 @@
-const print = @import("print.zig");
+const console = @import("console.zig");
 const muart = @import("mini_uart.zig");
 const fuart = @import("full_uart.zig");
 
@@ -6,14 +6,14 @@ pub const PanicHandler = struct {
     pub fn call(msg: []const u8, ret_addr: ?usize) noreturn {
         _ = ret_addr;
 
-        print.setUart(print.UartType.full_uart);
-        print.print("Panic!: ", .{});
+        console.setUart(console.UartType.full_uart);
+        console.print("Panic!: ", .{});
         
         for (msg) |c| {
             fuart.send(c);
         }
         
-        print.print("\n", .{});
+        console.print("\n", .{});
         while (true) {}
     }
 

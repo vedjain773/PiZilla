@@ -1,5 +1,5 @@
 const gpios = @import("gpio.zig");
-const print = @import("print.zig");
+const console = @import("console.zig");
 const utils = @import("utils.zig");
 const timer = @import("timer.zig");
 
@@ -43,12 +43,12 @@ const error_msgs = [16][] const u8 {
     "ERROR_INVALID_EL0_32"
 };
 
-pub extern fn irq_vector_init() void;
-pub extern fn enable_irq() void;
-pub extern fn disable_irq() void;
+pub extern fn vector_init() void;
+pub extern fn enable() void;
+pub extern fn disable() void;
 
 pub export fn show_invalid_entry_message(ty: u32, esr: usize, addr: usize) void {
-    print.print("[Invalid entry message] %s, ESR: %x, address: %x\r\n", .{error_msgs[ty], esr, addr});
+    console.print("[Invalid entry message] %s, ESR: %x, address: %x\r\n", .{error_msgs[ty], esr, addr});
 }
 
 pub fn enableInterruptController() void {
@@ -60,6 +60,6 @@ pub export fn handle_irq() void {
 
     switch (irq) {
         SYSTEM_TIMER_IRQ_1 => timer.handleTimerIrq(),
-        else => print.print("Unknown pending irq: %x", .{irq}),
+        else => console.print("Unknown pending irq: %x", .{irq}),
     }
 }

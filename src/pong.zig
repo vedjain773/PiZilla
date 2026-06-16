@@ -1,9 +1,9 @@
 const fb = @import("framebuffer.zig");
 const utils = @import("utils.zig");
 const uart = @import("mini_uart.zig");
-const print = @import("print.zig");
 const timer = @import("timer.zig");
 const font = @import("font.zig");
+const console = @import("console.zig");
 
 var sx: u32 = 50;
 var sy: u32 = 50;
@@ -171,7 +171,7 @@ pub fn start() noreturn {
             fb.drawBlankPix(@max(ball.posx, 0), @max(ball.posy, 0));
 
             ball.resetPos(); 
-            print.print("Score: %d - %d\n", .{su, sd});
+            console.print("Score: %d - %d\n", .{su, sd});
 
             font.clearGlyph(50, 0);
             font.clearGlyph(70, 0);

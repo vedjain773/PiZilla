@@ -1,12 +1,12 @@
 const full_uart = @import("full_uart.zig");
 const utils = @import("utils.zig");
-const print = @import("print.zig");
+const console = @import("console.zig");
 const timer = @import("timer.zig");
 const irq = @import("irq.zig");
 const pong = @import("pong.zig");
 const panic_handler = @import("panic.zig");
 const fork = @import("fork.zig");
-const schedule = @import("schedule.zig");
+const scheduler = @import("scheduler.zig");
 
 pub const panic = panic_handler.PanicHandler;
 
@@ -22,29 +22,29 @@ fn process(msg: []u8) noreturn {
 export fn kernel_main() noreturn {
     const num: u32 = utils.getEl();
 
-    print.setUart(print.UartType.full_uart);
-    print.print("Exception-level: %d\n", .{num});
+    console.setUart(console.UartType.full_uart);
+    console.print("Exception-level: %d\n", .{num});
 
-    irq.irq_vector_init();
+    irq.vector_init();
     timer.timerInit();
 
     irq.enableInterruptController();
-    irq.enable_irq(); 
+    irq.enable(); 
    
     //pong.start();
-    schedule.initTasks();
+    scheduler.initTasks();
 
     var res: i32 = fork.copyProcess(@intFromPtr(&process), @intFromPtr("abcde"));
     if (res != 0) {
-        print.print("Error while creating process 1", .{});
+        console.print("Error while creating process 1", .{});
     }
 
     res = fork.copyProcess(@intFromPtr(&process), @intFromPtr("12345"));
     if (res != 0) {
-        print.print("Error while creating process 2", .{});
+        console.print("Error while creating process 2", .{});
     }
 
     while(true) {
-        schedule.schedule();
+        scheduler.schedule();
     }
 }

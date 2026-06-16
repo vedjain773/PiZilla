@@ -1,5 +1,5 @@
 const irq = @import("irq.zig");
-const print = @import("print.zig");
+const console = @import("console.zig");
 
 pub const THREAD_SIZE: usize = 4096;
 const NUM_TASKS: usize = 64;
@@ -104,7 +104,7 @@ fn schedCallBack() void {
         }
     }
 
-    print.print("Switching to task %d\n", .{next});
+    console.print("Switching to task %d\n", .{next});
     switchTo(tasks[next].?);
     preemptEnable();
 } 
@@ -122,9 +122,9 @@ pub fn timerTick() void {
 
     current.*.counter = 0;
 
-    irq.enable_irq();
+    irq.enable();
     schedCallBack();
-    irq.disable_irq();
+    irq.disable();
 }
 
 fn switchTo(next: *Task) void {

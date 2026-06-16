@@ -1,4 +1,3 @@
-const print = @import("print.zig");
 const mailbox = @import("mailbox.zig");
 
 const ALLOC: u32 = 0x00040001;
