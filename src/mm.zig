@@ -15,6 +15,8 @@ const PAGES: usize = (PAGE_MEMORY / PAGE_SIZE);
 
 var mem_map :[PAGES]u16 = @splat(0);
 
+pub extern fn memzero(src: usize, n: usize) void;  
+
 pub fn kMalloc() usize {
     for (mem_map, 0..) |_, i| {
         if (mem_map[i] == 0) {
