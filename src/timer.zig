@@ -1,6 +1,7 @@
 const gpios = @import("gpio.zig");
 const print = @import("print.zig");
 const utils = @import("utils.zig");
+const schedule = @import("schedule.zig");
 
 const BASE: usize = gpios.BASE;
 
@@ -41,6 +42,8 @@ pub fn handleTimerIrq() void {
     //Acknowledge the interrupt
     utils.write32(TIMER_CS, TIMER_CS_M1);
     //print.print("Timer interrupt received!\n", .{});
+
+    schedule.timerTick();
 }
 
 pub fn getTicks() u32 {
