@@ -4,9 +4,11 @@ const console = @import("console.zig");
 pub const THREAD_SIZE: usize = 4096;
 const NUM_TASKS: usize = 64;
 
-pub const TASK_RUNNING: u64 = 0;
-pub const TASK_ZOMBIE: u64 = 1;
-pub const TASK_SLEEPING: u64 = 2;
+pub const State = enum {
+    TASK_RUNNING,
+    TASK_ZOMBIE,
+    TASK_SLEEPING
+};
 
 const CPUContext =  struct {
     x19: usize,
@@ -26,7 +28,7 @@ const CPUContext =  struct {
 
 pub const Task = struct {
     cpu_cxt: CPUContext,
-    state: u64,
+    state: State,
     counter: u64,
     priority: u64,
     preempt_count: u64,
@@ -49,7 +51,7 @@ const init_task: Task = .{
         .sp = 0,
         .pc = 0
     },
-    .state = TASK_RUNNING,
+    .state = State.TASK_RUNNING,
     .counter = 0,
     .priority = 1,
     .preempt_count = 0,
@@ -87,7 +89,7 @@ fn schedCallBack() void {
         for (0..NUM_TASKS) |i| {
             const task_ptr: *Task = tasks[i] orelse continue;
 
-            if (task_ptr.*.state == TASK_RUNNING and task_ptr.*.counter > curr) {
+            if (task_ptr.*.state == State.TASK_RUNNING and task_ptr.*.counter > curr) {
                 curr = @as(i32, @intCast(task_ptr.*.counter));
                 next = i;
             }
@@ -115,6 +117,18 @@ pub fn schedule() void {
 }
 
 pub fn timerTick() void {
+    for (0..NUM_TASKS) |i| {
+        const task_ptr: *Task = tasks[i] orelse continue;
+
+        if (task_ptr.*.state == State.TASK_SLEEPING) {
+            task_ptr.*.wake_ticks -= 1;
+
+            if (task_ptr.*.wake_ticks <= 0) {
+                task_ptr.*.state = State.TASK_RUNNING;
+            }
+        }
+    }
+
     current.*.counter -= 1;
 
     if (current.*.counter > 0 or current.*.preempt_count > 0)
@@ -136,6 +150,15 @@ fn switchTo(next: *Task) void {
     cpu_switch_to(prev, next);
 }
 
+pub fn sleep(ticks: u32) void {
+    current.*.state = State.TASK_SLEEPING;
+    current.*.wake_ticks = ticks;
+}
+
 export fn schedule_tail() void {
     preemptEnable();
+}
+
+export fn exit_process() void {
+    current.*.state = State.TASK_ZOMBIE;
 }

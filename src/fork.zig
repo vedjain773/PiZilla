@@ -11,7 +11,7 @@ pub fn copyProcess(func: usize, arg: usize) i32 {
     const proc_ptr: *Task = proc orelse return -1;
     
     proc_ptr.*.priority = 1;
-    proc_ptr.*.state = scheduler.TASK_RUNNING;
+    proc_ptr.*.state = scheduler.State.TASK_RUNNING;
     proc_ptr.*.counter = proc_ptr.*.priority;
 
     proc_ptr.*.preempt_count = 1;

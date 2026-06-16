@@ -90,7 +90,8 @@ pub fn find_target(vx: i32, vy: i32) void {
     }
 }
 
-pub fn start() noreturn {
+pub fn start(msg: []u8) noreturn {
+    _ = msg;
     fb.init_fb();
 
     var ball: Ball = .{
@@ -150,7 +151,7 @@ pub fn start() noreturn {
             }
         }
         
-        wait(75);
+        //wait(75);
         
         if (ball.posx <= 0 or ball.posx >= 639) {
             ball.velx *= -1;

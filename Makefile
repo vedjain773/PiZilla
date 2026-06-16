@@ -42,7 +42,6 @@ qemu-d : kernel8.img
 	@qemu-system-aarch64 \
 		-M raspi3b \
 		-kernel kernel8.img \
-		-serial null \
 		-serial stdio \
 		-display gtk
 
