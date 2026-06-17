@@ -4,11 +4,13 @@ const entry = @import("entry.zig");
 
 const Task = scheduler.Task;
 
-pub fn copyProcess(func: usize, arg: usize) i32 {
+const err = error.NullAssignment;
+
+pub fn copyProcess(func: usize, arg: usize) !void {
     scheduler.preemptDisable();
     const proc: ?*Task = @as(?*Task, @ptrFromInt(mm.kMalloc()));
 
-    const proc_ptr: *Task = proc orelse return -1;
+    const proc_ptr: *Task = proc orelse return err;
     
     proc_ptr.*.priority = 1;
     proc_ptr.*.state = scheduler.State.TASK_RUNNING;
@@ -26,5 +28,4 @@ pub fn copyProcess(func: usize, arg: usize) i32 {
     scheduler.tasks[pid] = proc_ptr;
 
     scheduler.preemptEnable();
-    return 0;
 }

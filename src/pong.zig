@@ -84,8 +84,7 @@ pub fn find_target(vx: i32, vy: i32) void {
     }
 }
 
-pub fn start(msg: []u8) noreturn {
-    _ = msg;
+pub fn start() noreturn {
     fb.init_fb();
 
     var ball: Ball = .{
