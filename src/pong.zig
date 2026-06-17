@@ -1,9 +1,11 @@
 const fb = @import("framebuffer.zig");
 const utils = @import("utils.zig");
-const uart = @import("mini_uart.zig");
+const mini_uart = @import("mini_uart.zig");
+const full_uart = @import("full_uart.zig");
 const timer = @import("timer.zig");
 const font = @import("font.zig");
 const console = @import("console.zig");
+const scheduler = @import("scheduler.zig");
 
 var sx: u32 = 50;
 var sy: u32 = 50;
@@ -58,14 +60,6 @@ const Paddle = struct {
     }
 
 };
-
-fn wait(t: u32) void {
-    const target: u32 = timer.getTicks() + t;
-    while (timer.getTicks() < target) {
-        //wait
-    }
-    return;
-}
 
 pub fn detect_col(ball: *Ball, paddle: *Paddle) bool {
     if (@max(ball.posy, 0) == paddle.y) {
@@ -136,7 +130,7 @@ pub fn start(msg: []u8) noreturn {
 
         ball.updatePos();
 
-        const c: u8 = uart.crec();
+        const c: u8 = mini_uart.crec();
         if (c == 'd') {
             pad_2.moveRight();
         } else if (c == 'a') {
@@ -150,8 +144,6 @@ pub fn start(msg: []u8) noreturn {
                 pad_1.moveLeft();
             }
         }
-        
-        //wait(75);
         
         if (ball.posx <= 0 or ball.posx >= 639) {
             ball.velx *= -1;
@@ -178,6 +170,8 @@ pub fn start(msg: []u8) noreturn {
             font.clearGlyph(70, 0);
             font.renderInt(50, 0, su);
             font.renderInt(70, 0, sd);
-        } 
+        }
+
+        scheduler.sleep(1);
     }
 }

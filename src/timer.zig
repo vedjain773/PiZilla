@@ -44,8 +44,3 @@ pub fn handleTimerIrq() void {
 
     scheduler.timerTick();
 }
-
-pub fn getTicks() u32 {
-    const low: u32 = utils.read32(TIMER_CLO);
-    return @as(u32, @divFloor(low, 1000));
-}

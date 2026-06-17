@@ -106,7 +106,6 @@ fn schedCallBack() void {
         }
     }
 
-    console.print("Switching to task %d\n", .{next});
     switchTo(tasks[next].?);
     preemptEnable();
 } 
@@ -153,6 +152,7 @@ fn switchTo(next: *Task) void {
 pub fn sleep(ticks: u32) void {
     current.*.state = State.TASK_SLEEPING;
     current.*.wake_ticks = ticks;
+    schedCallBack();
 }
 
 export fn schedule_tail() void {

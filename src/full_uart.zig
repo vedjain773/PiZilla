@@ -50,6 +50,14 @@ pub fn recv() u8 {
     return @truncate(utils.read32(UART_DR) & 0xFF);
 }
 
+pub fn crec() u8 {
+    if ((utils.read32(UART_FR) & 0x40) == 0) {
+        return @as(u8, 0);
+    } else {
+        return @truncate(utils.read32(UART_DR) & 0xFF);
+    }
+}
+
 pub fn send(ch: u8) void {
      while (true) {
         if ((utils.read32(UART_FR) & 0x80) != 0) {
