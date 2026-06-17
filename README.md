@@ -2,72 +2,52 @@
 
 A bare metal OS kernel for the Raspberry Pi 3B, written in Zig.
 
-![Demo](./assets/demo.png)
-
-## Features
-
-- Bare metal aarch64 boot via custom assembly bootloader
-- Mini UART and PL011 UART drivers for serial I/O
-- Mailbox interface for VideoCore GPU communication
-- Drivers for framebuffer and system timer
-- Pong game (player vs AI) with keyboard input
+![Demo](./assets/demo2.png)
 
 ## Requirements
 
-- [Zig](https://ziglang.org/) 0.17 or later
+- [Zig](https://ziglang.org/) 0.16 or later
 - [QEMU](https://www.qemu.org/) with `qemu-system-aarch64` for emulation
 
 ## Usage
 Clone the repository
-```
-git clone https://github.com/vedjain773/PiZilla.git
+```bash
+git clone https://github.com/vedjain773/PiZilla.git and cd PiZilla 
 ```
 
 Build the project
-```
+```bash
 make
 ```
 
 Run on QEMU
-```
+```bash
 make qemu-d
 ```
-## Project Structure
-```
-.
-├── asm
-│   ├── boot.S
-│   ├── entry.S
-│   ├── irq.S
-│   └── mm.S
-├── build.zig
-├── header
-│   ├── entry.h
-│   ├── mm.h
-│   └── sysregs.h
-├── Makefile
-├── README.md
-└── src
-    ├── font.zig
-    ├── framebuffer.zig
-    ├── gpio.zig
-    ├── irq.zig
-    ├── linker.ld
-    ├── mailbox.zig
-    ├── main.zig
-    ├── mini_uart.zig
-    ├── pong.zig
-    ├── print.zig
-    ├── timer.zig
-    └── utils.zig
-```
 
-## Controls
+## Features
+- Preemptive multitasking with a round-robin task scheduler and full context switching
+- Interrupt-driven timer with IRQ handling
+- Mailbox interface for communicating with the VideoCore GPU
+- Framebuffer driver with pixel, line, and bitmap font rendering
+- Mini UART and PL011 UART drivers for serial I/O, including keyboard input
+- A playable Pong game (player vs. AI) with a live tick counter, running entirely on bare metal
 
-| Key | Action |
-|-----|--------|
-| `a` | Move paddle left |
-| `d` | Move paddle right |
+### Controls
+The pong game uses standard WASD controls.
+
+## About
+The project was greatly inspired by NovaPI, a similar project some friends at my club worked on a 
+year back. I've always been interested in compilers and systems programming in general, and wanted to pick up a project related to OS development.
+
+Although C was the default choice for kernel/OS related projects like these, I wanted to use a 
+more modern language to get a more unique developer experience out of this. I initially leaned
+toward using Rust, but its borrow checker and the need to add mut every time I needed a mutable variable seemed pretty weird to me coming from languages like C/C++.
+
+It was for these reasons that I decided to go with Zig instead. The syntax felt much more
+intuitive to me than Rust's ever did, and it just felt like the language was built for embedded/OS development. I was also a massive fan of the cross compiler bundled in with Zig, and the fact that it uses LLVM under the hood (I'm a massive fan of the LLVM project).
+
+That said, I'm still pretty new to the language, and much of the code I've written in Zig comes from a C/C++ mindset, so it definitely isn't the most elegant Zig codebase out there.
 
 ## Acknowledgements
 
