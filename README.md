@@ -12,7 +12,8 @@ A bare metal OS kernel for the Raspberry Pi 3B, written in Zig.
 ## Usage
 Clone the repository
 ```bash
-git clone https://github.com/vedjain773/PiZilla.git and cd PiZilla 
+git clone https://github.com/vedjain773/PiZilla.git
+cd PiZilla
 ```
 
 Build the project
@@ -26,28 +27,16 @@ make qemu-d
 ```
 
 ## Features
-- Preemptive multitasking with a round-robin task scheduler and full context switching
-- Interrupt-driven timer with IRQ handling
-- Mailbox interface for communicating with the VideoCore GPU
-- Framebuffer driver with pixel, line, and bitmap font rendering
-- Mini UART and PL011 UART drivers for serial I/O, including keyboard input
-- A playable Pong game (player vs. AI) with a live tick counter, running entirely on bare metal
 
-### Controls
-The pong game uses standard WASD controls.
+At its core, PiZilla runs a preemptive round-robin scheduler with full context switching, driven by an interrupt-based timer and IRQ handling, so multiple tasks actually share the CPU rather than running cooperatively.
+
+For I/O, it talks to the VideoCore GPU through the mailbox interface and drives a framebuffer capable of pixel, line, and bitmap font rendering. Serial input and output are handled by both the Mini UART and PL011 UART drivers, including keyboard input.
+
+To put it all together, the kernel runs a playable game of Pong (player vs. AI) with WASD controls and a live tick counter, entirely on bare metal with no OS underneath.
 
 ## About
-The project was greatly inspired by NovaPI, a similar project some friends at my club worked on a 
-year back. I've always been interested in compilers and systems programming in general, and wanted to pick up a project related to OS development.
 
-Although C was the default choice for kernel/OS related projects like these, I wanted to use a 
-more modern language to get a more unique developer experience out of this. I initially leaned
-toward using Rust, but its borrow checker and the need to add mut every time I needed a mutable variable seemed pretty weird to me coming from languages like C/C++.
-
-It was for these reasons that I decided to go with Zig instead. The syntax felt much more
-intuitive to me than Rust's ever did, and it just felt like the language was built for embedded/OS development. I was also a massive fan of the cross compiler bundled in with Zig, and the fact that it uses LLVM under the hood (I'm a massive fan of the LLVM project).
-
-That said, I'm still pretty new to the language, and much of the code I've written in Zig comes from a C/C++ mindset, so it definitely isn't the most elegant Zig codebase out there.
+Inspired by [NovaPI](https://github.com/moxybaba/NovaPi), a project some friends built at my club. I wanted to try OS development and picked Zig over C or Rust — it felt purpose-built for embedded/systems work, without Rust's borrow-checker friction. I'm still new to the language, so the code leans more C/C++ in style than idiomatic Zig.
 
 ## Acknowledgements
 
