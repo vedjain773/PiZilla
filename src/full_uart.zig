@@ -86,18 +86,16 @@ pub fn sendInt(num: u32) void {
 
     var i: usize = 0;
     no = num;
-    while (i < no_of_digits) {
+    while (i < no_of_digits): (i += 1) {
         const last_digit: u32 = @rem(no, 10);
         digits[i] = last_digit;
         no = @divFloor(no, 10);
-        i += 1;
     }
 
     i = 0;
-    while (i < no_of_digits) {
+    while (i < no_of_digits): (i += 1) {
         const ch: c_char = @intCast('0' + digits[no_of_digits - 1 - i]);
         send(ch);
-        i += 1;
     }
 }
 
@@ -108,16 +106,14 @@ pub fn sendHex(num: u32) void {
 
     var digits: [8]u32 = .{0, 0, 0, 0, 0, 0, 0, 0};
 
-    while (i < 8) {
+    while (i < 8): (i += 1) {
         const digit: u32 = no & selector;
         no = no >> 4;
         digits[7 - i] = digit;
-
-        i += 1;
     }
     
     i = 0;
-    while (i < 8) {
+    while (i < 8): (i += 1) {
         if (digits[i] < 10) {
             sendInt(digits[i]);
         } else {
@@ -125,8 +121,6 @@ pub fn sendHex(num: u32) void {
             const ch: u8 = @intCast('A' + diff);
             send(ch);
         }
-
-        i += 1;
     }
 }
 

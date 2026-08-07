@@ -48,7 +48,7 @@ pub fn renderGlyph(x: u32, y: u32, id: usize) void {
 
     var i: usize = 0;
 
-    while (i < 64) {
+    while (i < 64): (i += 1) {
         if (fg & selector == 0x1) {
             const col: u32 = @truncate(i % 8);
             const row: u32 = @truncate(@divFloor(i, 8));
@@ -56,7 +56,6 @@ pub fn renderGlyph(x: u32, y: u32, id: usize) void {
         }
         
         fg = fg >> 1;
-        i += 1;
     }
 }
 
@@ -66,7 +65,7 @@ pub fn renderDigit(x: u32, y: u32, id: u32) void {
 
     var i: usize = 0;
 
-    while (i < 64) {
+    while (i < 64): (i += 1) {
         if (ng & selector == 0x1) {
             const col: u32 = @truncate(i % 8);
             const row: u32 = @truncate(@divFloor(i, 8));
@@ -74,7 +73,6 @@ pub fn renderDigit(x: u32, y: u32, id: u32) void {
         }
         
         ng = ng >> 1;
-        i += 1;
     }
 
 }
@@ -97,18 +95,16 @@ pub fn renderInt(x: u32, y: u32, num: u32) void {
 
     var i: usize = 0;
     no = num;
-    while (i < no_of_digits) {
+    while (i < no_of_digits): (i += 1) {
         const last_digit: u32 = @rem(no, 10);
         digits[i] = last_digit;
         no = @divFloor(no, 10);
-        i += 1;
     }
 
     i = 0;
     var x_s: u32 = x;
-    while (i < no_of_digits) {
+    while (i < no_of_digits): (i += 1) {
         renderDigit(x_s, y, digits[i]);
-        i += 1;
         x_s += 9;
     }
 }
@@ -121,23 +117,20 @@ pub fn renderChar(x: u32, y: u32, ch: u8) void {
 pub fn renderStr(x: u32, y: u32, msg: []const u8) void {
     var i: usize = 0;
     var x_s: u32 = x;
-    while (i < msg.len) {
+    while (i < msg.len): (i += 1) {
         const ch: u8 = @intCast(msg[i]);
         renderChar(x_s, y, ch);
         x_s += 9;
-        i += 1;
     } 
 }
 
 pub fn clearGlyph(x: u32, y: u32) void {
     var i: usize = 0;
 
-    while (i < 64) {
+    while (i < 64): (i += 1) {
         const col: u32 = @truncate(i % 8);
         const row: u32 = @truncate(@divFloor(i, 8));
-        fb.drawBlankPix(x + col, y + row);
-        
-        i += 1;
+        fb.drawBlankPix(x + col, y + row);    
     }
 
 }
