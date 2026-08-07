@@ -20,7 +20,7 @@ export fn kernel_main() noreturn {
     timer.timerInit();
 
     irq.enableInterruptController();
-    irq.enable(); 
+    irq.enable();  
    
     //pong.start();
     scheduler.initTasks();

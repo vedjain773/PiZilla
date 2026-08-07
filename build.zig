@@ -28,7 +28,8 @@ pub fn build(b: *std.Build) void {
             "./asm/mm.S",
             "./asm/entry.S",
             "./asm/irq.S",
-            "./asm/schedule.S"
+            "./asm/schedule.S",
+            "./asm/atomic.S"
         },
         .flags = &[_][]const u8{ "-x", "assembler-with-cpp" },
     });
