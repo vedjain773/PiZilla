@@ -1,4 +1,4 @@
-const fb = @import("framebuffer.zig");
+const fb = @import("drivers/framebuffer.zig");
 
 const glyphs: [26]u64 = .{
     0x818181ff81422418,

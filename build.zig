@@ -16,7 +16,7 @@ pub fn build(b: *std.Build) void {
         }),
     });
 
-    exe.setLinkerScript(b.path("src/linker.ld"));
+    exe.setLinkerScript(b.path("src/boot/linker.ld"));
     exe.root_module.strip = false;
     exe.pie = false;
 

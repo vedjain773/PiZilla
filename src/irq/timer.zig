@@ -1,6 +1,6 @@
-const gpios = @import("gpio.zig");
-const utils = @import("utils.zig");
-const scheduler = @import("scheduler.zig");
+const gpios = @import("../drivers/gpio.zig");
+const utils = @import("../utils.zig");
+const scheduler = @import("../sched/scheduler.zig");
 
 const BASE: usize = gpios.BASE;
 

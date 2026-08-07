@@ -1,4 +1,4 @@
-const gpios = @import("gpio.zig");
+const gpios = @import("drivers/gpio.zig");
 
 const PAGE_SHIFT: usize = 12;
 const TABLE_SHIFT: usize = 9;

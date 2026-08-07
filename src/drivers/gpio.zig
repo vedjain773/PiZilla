@@ -1,4 +1,4 @@
-const utils = @import("utils.zig");
+const utils = @import("../utils.zig");
 
 pub const BASE: usize = 0x3F000000;
 

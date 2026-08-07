@@ -1,6 +1,6 @@
-const gpios = @import("gpio.zig");
-const console = @import("console.zig");
-const utils = @import("utils.zig");
+const gpios = @import("../drivers/gpio.zig");
+const console = @import("../console.zig");
+const utils = @import("../utils.zig");
 const timer = @import("timer.zig");
 
 const BASE: usize = gpios.BASE;

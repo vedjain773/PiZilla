@@ -1,11 +1,11 @@
-const fb = @import("framebuffer.zig");
-const utils = @import("utils.zig");
-const mini_uart = @import("mini_uart.zig");
-const full_uart = @import("full_uart.zig");
-const timer = @import("timer.zig");
-const font = @import("font.zig");
-const console = @import("console.zig");
-const scheduler = @import("scheduler.zig");
+const fb = @import("../drivers/framebuffer.zig");
+const utils = @import("../utils.zig");
+const mini_uart = @import("../drivers/mini_uart.zig");
+const full_uart = @import("../drivers/full_uart.zig");
+const timer = @import("../irq/timer.zig");
+const font = @import("../font.zig");
+const console = @import("../console.zig");
+const scheduler = @import("../sched/scheduler.zig");
 
 var sx: u32 = 50;
 var sy: u32 = 50;
