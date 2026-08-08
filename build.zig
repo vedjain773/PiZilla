@@ -10,32 +10,32 @@ pub fn build(b: *std.Build) void {
     });
     
     const lib_mod = b.addModule("lib", .{
-        .root_source_file = b.path("src/lib/root.zig"),
+        .root_source_file = b.path("lib/root.zig"),
         .target = target
     });
 
     const mm_mod = b.addModule("mm", .{
-        .root_source_file = b.path("src/mm/root.zig"),
+        .root_source_file = b.path("mm/root.zig"),
         .target = target
     });
 
     const irq_mod = b.addModule("irq", .{
-        .root_source_file = b.path("src/irq/root.zig"),
+        .root_source_file = b.path("irq/root.zig"),
         .target = target
     }); 
 
     const boot_mod = b.addModule("boot", .{
-        .root_source_file = b.path("src/boot/root.zig"),
+        .root_source_file = b.path("boot/root.zig"),
         .target = target
     });
 
     const drivers_mod = b.addModule("drivers", .{
-        .root_source_file = b.path("src/drivers/root.zig"),
+        .root_source_file = b.path("drivers/root.zig"),
         .target = target
     });
 
     const sched_mod = b.addModule("sched", .{
-        .root_source_file = b.path("src/sched/root.zig"),
+        .root_source_file = b.path("sched/root.zig"),
         .target = target
     });
 
@@ -56,7 +56,7 @@ pub fn build(b: *std.Build) void {
     const exe = b.addExecutable(.{
         .name = "kernel8.elf",
         .root_module = b.createModule(.{
-            .root_source_file = b.path("src/main.zig"),
+            .root_source_file = b.path("main.zig"),
             .target = target,
             .optimize = optimize,
             .imports = &.{
@@ -73,7 +73,7 @@ pub fn build(b: *std.Build) void {
     exe.root_module.strip = false;
     exe.pie = false;
 
-    exe.root_module.addIncludePath(b.path("src"));
+    exe.root_module.addIncludePath(b.path("."));
 
     exe.root_module.addCSourceFiles(.{
         .files = &[_][]const u8{
