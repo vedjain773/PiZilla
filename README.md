@@ -12,18 +12,17 @@ A bare metal OS kernel for the Raspberry Pi 3B, written in Zig.
 ## Usage
 Clone the repository
 ```bash
-git clone https://github.com/vedjain773/PiZilla.git
-cd PiZilla
+git clone https://github.com/vedjain773/pi-zilla.git
+cd pi-zilla
 ```
 
 Build the project
 ```bash
-make
-```
+#Emit kernel8.img
+zig build img
 
-Run on QEMU
-```bash
-make qemu-d
+#Emulate on QEMU
+zig build qemu-d
 ```
 
 ## Features
