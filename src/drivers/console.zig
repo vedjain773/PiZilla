@@ -1,5 +1,5 @@
-const muart = @import("drivers/mini_uart.zig");
-const fuart = @import("drivers/full_uart.zig");
+const muart = @import("mini_uart.zig");
+const fuart = @import("full_uart.zig");
 
 //var is_mini: bool = false;
 

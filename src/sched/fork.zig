@@ -1,6 +1,6 @@
 const scheduler = @import("scheduler.zig");
-const mm = @import("../mm.zig");
-const entry = @import("../boot/entry.zig");
+const mm = @import("mm").mm;
+const entry = @import("boot").entry;
 
 const Task = scheduler.Task;
 

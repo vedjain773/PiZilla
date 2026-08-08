@@ -1,12 +1,17 @@
-const console = @import("console.zig");
-const utils = @import("utils.zig");
-const timer = @import("irq/timer.zig");
-const irq = @import("irq/irq.zig");
+const timer = @import("irq").timer;
+const irq = @import("irq").irq;
+
+const console = @import("drivers").console;
+
+const utils = @import("lib").utils;
+
 const pong = @import("apps/pong.zig");
 const clock = @import("apps/clock.zig");
+
+const fork = @import("sched").fork;
+const scheduler = @import("sched").scheduler;
+
 const panic_handler = @import("panic.zig");
-const fork = @import("sched/fork.zig");
-const scheduler = @import("sched/scheduler.zig");
 
 pub const panic = panic_handler.PanicHandler;
 

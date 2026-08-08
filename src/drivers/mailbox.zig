@@ -1,5 +1,5 @@
 const gpios = @import("gpio.zig");
-const utils = @import("../utils.zig");
+const utils = @import("lib").utils;
 
 const BASE = gpios.BASE;
 

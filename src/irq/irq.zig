@@ -1,6 +1,6 @@
-const gpios = @import("../drivers/gpio.zig");
-const console = @import("../console.zig");
-const utils = @import("../utils.zig");
+const gpios = @import("drivers").gpio;
+const console = @import("drivers").console;
+const utils = @import("lib").utils;
 const timer = @import("timer.zig");
 
 const BASE: usize = gpios.BASE;
@@ -48,7 +48,8 @@ pub extern fn enable() void;
 pub extern fn disable() void;
 
 pub export fn show_invalid_entry_message(ty: u32, esr: usize, addr: usize) void {
-    console.print("[Invalid entry message] %s, ESR: %x, address: %x\r\n", .{error_msgs[ty], esr, addr});
+    console.print("[Invalid entry message] %s, ESR: %x, address: %x\r\n", 
+        .{error_msgs[ty], esr, addr});
 }
 
 pub fn enableInterruptController() void {

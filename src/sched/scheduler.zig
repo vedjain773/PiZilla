@@ -1,5 +1,5 @@
-const irq = @import("../irq/irq.zig");
-const console = @import("../console.zig");
+const irq = @import("irq").irq;
+const console = @import("drivers").console;
 
 pub const THREAD_SIZE: usize = 4096;
 const NUM_TASKS: usize = 64;

@@ -1,6 +1,6 @@
-const console = @import("console.zig");
-const muart = @import("drivers/mini_uart.zig");
-const fuart = @import("drivers/full_uart.zig");
+const console = @import("drivers").console;
+const muart = @import("drivers").muart;
+const fuart = @import("drivers").fuart;
 
 pub const PanicHandler = struct {
     pub fn call(msg: []const u8, ret_addr: ?usize) noreturn {

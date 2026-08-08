@@ -1,5 +1,5 @@
-const font = @import("../font.zig");
-const scheduler = @import("../sched/scheduler.zig");
+const font = @import("lib").font;
+const scheduler = @import("sched").scheduler;
 
 var seconds: u8 = 0;
 var minutes: u8 = 0;

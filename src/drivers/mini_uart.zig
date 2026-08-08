@@ -1,5 +1,5 @@
 const gpios = @import("gpio.zig");
-const utils = @import("../utils.zig");
+const utils = @import("lib").utils;
 
 pub fn init() void {
     gpios.setGpioFunc(14, gpios.Funcs.ALT5);
