@@ -17,3 +17,14 @@ enable:
 disable:
 	msr	daifset, #2
 	ret
+
+.globl save_and_disable
+save_and_disable:
+    mrs x0, daif
+    msr daifset, #2
+    ret
+
+.globl restore
+restore:
+    msr daif, x0
+    ret

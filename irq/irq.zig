@@ -47,6 +47,9 @@ pub extern fn vector_init() void;
 pub extern fn enable() void;
 pub extern fn disable() void;
 
+pub extern fn save_and_disable() usize;
+pub extern fn restore(prev_state: usize) void;
+
 pub export fn show_invalid_entry_message(ty: u32, esr: usize, addr: usize) void {
     console.print("[Invalid entry message] %s, ESR: %x, address: %x\r\n", 
         .{error_msgs[ty], esr, addr});

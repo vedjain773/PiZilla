@@ -5,13 +5,12 @@ const console = @import("drivers").console;
 
 const utils = @import("lib").utils;
 
-const pong = @import("apps/pong.zig");
-const clock = @import("apps/clock.zig");
-
 const fork = @import("sched").fork;
 const scheduler = @import("sched").scheduler;
 
 const panic_handler = @import("panic.zig");
+const test_spin = @import("tests/spinlock.zig");
+const pong_clock = @import("tests/pong_clock.zig");
 
 pub const panic = panic_handler.PanicHandler;
 
@@ -26,16 +25,11 @@ export fn kernel_main() noreturn {
 
     irq.enableInterruptController();
     irq.enable();  
-   
-    //pong.start();
-    scheduler.initTasks();
 
-    fork.copyProcess(@intFromPtr(&pong.start), @intFromPtr("abcde")) 
-        catch console.print("Error while trying to start process 1\n", .{});
-   
-    fork.copyProcess(@intFromPtr(&clock.update), @intFromPtr("clock"))
-        catch console.print("Error while trying to start process 2\n", .{});
-    
+    scheduler.initTasks(); 
+
+    test_spin.run(); 
+        
     while(true) {
         scheduler.schedule();
     }
