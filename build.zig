@@ -53,7 +53,7 @@ pub fn build(b: *std.Build) void {
     sched_mod.addImport("irq", irq_mod);
     sched_mod.addImport("mm", mm_mod);
 
-    const exe = b.addExecutable(.{
+    const kernel = b.addExecutable(.{
         .name = "kernel8.elf",
         .root_module = b.createModule(.{
             .root_source_file = b.path("main.zig"),
@@ -69,13 +69,13 @@ pub fn build(b: *std.Build) void {
         }),
     });
 
-    exe.setLinkerScript(b.path("linker.ld"));
-    exe.root_module.strip = false;
-    exe.pie = false;
+    kernel.setLinkerScript(b.path("linker.ld"));
+    kernel.root_module.strip = false;
+    kernel.pie = false;
 
-    exe.root_module.addIncludePath(b.path("."));
+    kernel.root_module.addIncludePath(b.path("."));
 
-    exe.root_module.addCSourceFiles(.{
+    kernel.root_module.addCSourceFiles(.{
         .files = &[_][]const u8{
             "./asm/boot.S",
             "./asm/mm.S",
@@ -87,5 +87,63 @@ pub fn build(b: *std.Build) void {
         .flags = &[_][]const u8{ "-x", "assembler-with-cpp" },
     });
 
-    b.installArtifact(exe);
+    b.installArtifact(kernel);
+
+    //kernel8.img
+    const objcopy = b.addSystemCommand(&.{
+        "aarch64-linux-gnu-objcopy",
+        "./zig-out/bin/kernel8.elf",
+        "-O",
+        "binary",
+        "kernel8.img"
+    });
+
+    objcopy.step.dependOn(&kernel.step);
+
+    const img = b.step("img", "Create kernel8.img");
+    img.dependOn(&objcopy.step);
+
+    // QEMU
+    const qemu = b.addSystemCommand(&.{
+        "qemu-system-aarch64",
+        "-M", "raspi3b",
+        "-kernel", "kernel8.img",
+        "-serial", "stdio",
+        "-display", "none",
+    });
+
+    qemu.step.dependOn(&objcopy.step);
+
+    const qemu_step = b.step("qemu", "Run kernel in QEMU");
+    qemu_step.dependOn(&qemu.step);
+
+    // QEMU without the first serial device
+    const qemu_nd = b.addSystemCommand(&.{
+        "qemu-system-aarch64",
+        "-M", "raspi3b",
+        "-kernel", "kernel8.img",
+        "-serial", "null",
+        "-serial", "stdio",
+        "-display", "none",
+    });
+
+    qemu_nd.step.dependOn(&objcopy.step);
+
+    const qemu_nd_step = b.step("qemu-nd", "Run kernel in QEMU without display");
+    qemu_nd_step.dependOn(&qemu_nd.step);
+
+    // QEMU with GTK display
+    const qemu_d = b.addSystemCommand(&.{
+        "qemu-system-aarch64",
+        "-M", "raspi3b",
+        "-kernel", "kernel8.img",
+        "-serial", "null",
+        "-serial", "stdio",
+        "-display", "gtk",
+    });
+
+    qemu_d.step.dependOn(&objcopy.step);
+
+    const qemu_d_step = b.step("qemu-d", "Run kernel in QEMU with display");
+    qemu_d_step.dependOn(&qemu_d.step);
 }
