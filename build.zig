@@ -92,27 +92,29 @@ pub fn build(b: *std.Build) void {
     //kernel8.img
     const objcopy = b.addSystemCommand(&.{
         "aarch64-linux-gnu-objcopy",
-        "./zig-out/bin/kernel8.elf",
         "-O",
         "binary",
-        "kernel8.img"
     });
+
+    objcopy.addFileArg(kernel.getEmittedBin());
+    const img = objcopy.addOutputFileArg("kernel8.img");
 
     objcopy.step.dependOn(&kernel.step);
 
-    const img = b.step("img", "Create kernel8.img");
-    img.dependOn(&objcopy.step);
+    var img_step = b.step("img", "Create kernel8.img");
+    img_step.dependOn(&objcopy.step);
 
     // QEMU
     const qemu = b.addSystemCommand(&.{
         "qemu-system-aarch64",
         "-M", "raspi3b",
-        "-kernel", "kernel8.img",
         "-serial", "stdio",
         "-display", "none",
     });
 
-    qemu.step.dependOn(&objcopy.step);
+    qemu.addArg("-kernel");
+    qemu.addFileArg(img);
+    qemu.step.dependOn(img_step);
 
     const qemu_step = b.step("qemu", "Run kernel in QEMU");
     qemu_step.dependOn(&qemu.step);
@@ -121,13 +123,14 @@ pub fn build(b: *std.Build) void {
     const qemu_nd = b.addSystemCommand(&.{
         "qemu-system-aarch64",
         "-M", "raspi3b",
-        "-kernel", "kernel8.img",
         "-serial", "null",
         "-serial", "stdio",
         "-display", "none",
     });
 
-    qemu_nd.step.dependOn(&objcopy.step);
+    qemu_nd.addArg("-kernel");
+    qemu_nd.addFileArg(img);
+    qemu_nd.step.dependOn(img_step);
 
     const qemu_nd_step = b.step("qemu-nd", "Run kernel in QEMU without display");
     qemu_nd_step.dependOn(&qemu_nd.step);
@@ -136,13 +139,14 @@ pub fn build(b: *std.Build) void {
     const qemu_d = b.addSystemCommand(&.{
         "qemu-system-aarch64",
         "-M", "raspi3b",
-        "-kernel", "kernel8.img",
         "-serial", "null",
         "-serial", "stdio",
         "-display", "gtk",
     });
 
-    qemu_d.step.dependOn(&objcopy.step);
+    qemu_d.addArg("-kernel");
+    qemu_d.addFileArg(img);
+    qemu_d.step.dependOn(img_step);
 
     const qemu_d_step = b.step("qemu-d", "Run kernel in QEMU with display");
     qemu_d_step.dependOn(&qemu_d.step);
