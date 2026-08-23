@@ -64,7 +64,7 @@ pub fn build(b: *std.Build) void {
                 .{ .name = "irq", .module = irq_mod },
                 .{ .name = "drivers", .module = drivers_mod },
                 .{ .name = "sched", .module = sched_mod },
-                .{ .name = "lib", .module = lib_mod }
+                .{ .name = "lib", .module = lib_mod },
             },
         }),
     });

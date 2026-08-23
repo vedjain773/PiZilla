@@ -1,8 +1,11 @@
 const scheduler = @import("scheduler.zig");
+const task = @import("task.zig");
+
 const mm = @import("mm").mm;
 const entry = @import("boot").entry;
 
-const Task = scheduler.Task;
+const Task = task.Task;
+const State = task.State;
 
 const err = error.NullAssignment;
 
@@ -13,7 +16,7 @@ pub fn copyProcess(func: usize, arg: usize) !void {
     const proc_ptr: *Task = proc orelse return err;
     
     proc_ptr.*.priority = 1;
-    proc_ptr.*.state = scheduler.State.TASK_RUNNING;
+    proc_ptr.*.state = State.TASK_RUNNING;
     proc_ptr.*.counter = proc_ptr.*.priority;
 
     proc_ptr.*.preempt_count = 1;

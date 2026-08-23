@@ -1,39 +1,14 @@
 const irq = @import("irq").irq;
-const console = @import("drivers").console;
+const wq = @import("wq.zig");
+const task = @import("task.zig");
+
+const Task = task.Task;
+const State = task.State;
+
+const WaitQueue = wq.WaitQueue;
 
 pub const THREAD_SIZE: usize = 4096;
 const NUM_TASKS: usize = 64;
-
-pub const State = enum {
-    TASK_RUNNING,
-    TASK_ZOMBIE,
-    TASK_SLEEPING
-};
-
-const CPUContext =  struct {
-    x19: usize,
-    x20: usize,
-    x21: usize,
-    x22: usize,
-    x23: usize,
-    x24: usize,
-    x25: usize,
-    x26: usize,
-    x27: usize,
-    x28: usize,
-    fp: usize,
-    sp: usize,
-    pc: usize
-};
-
-pub const Task = struct {
-    cpu_cxt: CPUContext,
-    state: State,
-    counter: u64,
-    priority: u64,
-    preempt_count: u64,
-    wake_ticks: u64
-};
 
 const init_task: Task = .{
     .cpu_cxt = .{
@@ -55,7 +30,8 @@ const init_task: Task = .{
     .counter = 0,
     .priority = 1,
     .preempt_count = 0,
-    .wake_ticks = 0
+    .wake_ticks = 0,
+    .wait_next = null,
 };
 
 pub var current: *Task = @constCast(&init_task);
@@ -152,6 +128,19 @@ fn switchTo(next: *Task) void {
 pub fn sleep(ticks: u32) void {
     current.*.state = State.TASK_SLEEPING;
     current.*.wake_ticks = ticks;
+    schedCallBack();
+}
+
+pub fn wait(wait_q: *WaitQueue) void {
+    current.*.state = State.TASK_WAITING;
+    wait_q.*.enqueue(current);
+    schedCallBack();
+}
+
+pub fn wakeOne(wait_q: *WaitQueue) void {
+    const woken_task: *Task = wait_q.*.dequeue().?;
+
+    woken_task.*.state = State.TASK_RUNNING;
     schedCallBack();
 }
 
