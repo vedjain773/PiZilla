@@ -53,10 +53,18 @@ pub fn build(b: *std.Build) void {
     sched_mod.addImport("irq", irq_mod);
     sched_mod.addImport("mm", mm_mod);
 
+    const sample = b.option(
+        []const u8,
+        "sample",
+        "Sample to run (e.g. pong_clock, spinlock)",
+    ) orelse "pong_clock";
+
+    const sample_path = b.fmt("samples/{s}.zig", .{sample});
+
     const kernel = b.addExecutable(.{
         .name = "kernel8.elf",
         .root_module = b.createModule(.{
-            .root_source_file = b.path("main.zig"),
+            .root_source_file = b.path(sample_path),
             .target = target,
             .optimize = optimize,
             .imports = &.{
@@ -67,7 +75,7 @@ pub fn build(b: *std.Build) void {
                 .{ .name = "lib", .module = lib_mod },
             },
         }),
-    });
+    }); 
 
     kernel.setLinkerScript(b.path("linker.ld"));
     kernel.root_module.strip = false;

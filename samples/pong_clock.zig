@@ -8,10 +8,10 @@ const utils = @import("lib").utils;
 const fork = @import("sched").fork;
 const scheduler = @import("sched").scheduler;
 
-const panic_handler = @import("panic.zig");
-const test_spin = @import("tests/spinlock.zig");
-const pong_clock = @import("tests/pong_clock.zig");
+const pong = @import("apps/pong.zig");
+const clock = @import("apps/clock.zig");
 
+const panic_handler = @import("panic.zig");
 pub const panic = panic_handler.PanicHandler;
 
 export fn kernel_main() noreturn {
@@ -28,7 +28,11 @@ export fn kernel_main() noreturn {
 
     scheduler.initTasks(); 
 
-    test_spin.run(); 
+    fork.copyProcess(@intFromPtr(&pong.start), @intFromPtr("pong")) 
+        catch console.print("Error while trying to start process 1\n", .{});
+
+    fork.copyProcess(@intFromPtr(&clock.update), @intFromPtr("clock"))
+        catch console.print("Error while trying to start process 2\n", .{});
         
     while(true) {
         scheduler.schedule();
