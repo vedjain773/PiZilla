@@ -18,11 +18,11 @@ cd pi-zilla
 
 Build the project
 ```bash
-#Emit kernel8.img
-zig build img
-
-#Emulate on QEMU
+# Build and emulate the pong game on QEMU
 zig build qemu-d
+
+# Open the help menu
+zig build --help
 ```
 
 ## Features
@@ -31,7 +31,14 @@ At its core, PiZilla runs a preemptive round-robin scheduler with full context s
 
 For I/O, it talks to the VideoCore GPU through the mailbox interface and drives a framebuffer capable of pixel, line, and bitmap font rendering. Serial input and output are handled by both the Mini UART and PL011 UART drivers, including keyboard input.
 
-To put it all together, the kernel runs a playable game of Pong (player vs. AI) with WASD controls and a live tick counter, entirely on bare metal with no OS underneath.
+The kernel uses samples as entry points, each one showcasing a specific set of features. You can select which sample to run at build time using the -Dsample flag.
+
+| Sample | Description |
+|--------|-------------|
+| `pong_clock` | Runs a playable Pong game and a live tick counter as two concurrent preemptive tasks |
+| `spinlock` | Two tasks increment a shared counter using a spinlock to demonstrate mutual exclusion |
+| `wait_queue` | Two tasks block on a wait queue and are woken up by a third task after a set number of ticks, demonstrating inter-task synchronization |
+
 
 ## About
 
