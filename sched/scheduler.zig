@@ -144,6 +144,13 @@ pub fn wakeOne(wait_q: *WaitQueue) void {
     schedCallBack();
 }
 
+pub fn wakeAll(wait_q: *WaitQueue) void {
+    while (!wait_q.isEmpty()) {
+        wakeOne(wait_q);
+    }
+    schedCallBack();
+} 
+
 export fn schedule_tail() void {
     preemptEnable();
 }
